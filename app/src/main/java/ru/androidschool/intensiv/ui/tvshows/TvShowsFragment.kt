@@ -11,9 +11,6 @@ import kotlinx.android.synthetic.main.tv_shows_fragment.*
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.MockRepository
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 class TvShowsFragment : Fragment() {
 
     private val adapter by lazy {
@@ -32,7 +29,7 @@ class TvShowsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adap = TVAdapter(MockRepository.getMovies())
-        tv_show_recycler_view.adapter = adap
+        val moviesList = MockRepository.getMovies().map { TVItem(it) {  }}.toList()
+        tv_show_recycler_view.adapter = adapter.apply { addAll(moviesList) }
     }
 }
