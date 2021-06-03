@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.feed_fragment.*
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.MockRepository
@@ -33,16 +32,7 @@ class TvShowsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val moviesList = listOf(
-            TVShowContainer(
-                MockRepository.getMovies().map {
-                    TVItem(it) { _ -> }
-                }.toList()
-            )
-        )
-        tv_show_recycler_view.adapter = adapter.apply { addAll(moviesList) }
-    }
-
-    companion object {
+        val adap = TVAdapter(MockRepository.getMovies())
+        tv_show_recycler_view.adapter = adap
     }
 }
