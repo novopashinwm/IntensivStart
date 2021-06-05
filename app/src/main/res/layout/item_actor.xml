@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_preview"
+        android:layout_width="@dimen/image_preview_side"
+        android:layout_height="@dimen/image_preview_side"
+        android:layout_margin="@dimen/material_margin_small"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/FIO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart= "@dimen/material_margin_small"
+        android:textSize="7sp"
+        android:textColor="@color/grey"
+        tools:text="@tools:sample/full_names" />
+</LinearLayout>

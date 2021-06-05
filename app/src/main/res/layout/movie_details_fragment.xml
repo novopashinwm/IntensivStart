@@ -1,12 +1,165 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.androidschool.intensiv.ui.movie_details.MovieDetailsFragment">
+    android:background="@color/blueDark"
+    android:fitsSystemWindows="true">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/header_image_detail"
+            android:layout_width="@dimen/movie_tv_card_width"
+            android:layout_height="@dimen/movie_card_height"
+            android:layout_margin="@dimen/material_margin_normal"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
+            android:src="@drawable/inception"
+            tools:src="@drawable/inception" />
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/title"
+                style="@style/TVTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/material_margin_small"
+                android:layout_gravity="start"
+                android:layout_weight="1"
+                tools:text="Начало"
+                android:text="@string/mock_details_description"
+                tools:textColor="@color/grey" />
+            <ImageButton
+                android:id="@+id/like"
+                android:contentDescription="@string/movie_details_like"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
+                android:src="@drawable/ic_heart"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/watchMovie"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corners"
+                android:layout_margin="@dimen/material_margin_small"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/watch_movie_text_button" />
+
+            <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/movie_detail_rating"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:numStars="5"
+                android:layout_marginStart="@dimen/margin_start_rating_details"
+                android:progressBackgroundTint="@color/colorControlNormal"
+                android:layout_marginTop="@dimen/material_margin_small"
+                android:stepSize="0.2"
+                tools:rating="5" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/overview"
+            tools:text="@string/mock_overview"
+            android:textColor="@color/grey"
+            android:layout_margin="@dimen/material_margin_small"
+            android:text="@string/mock_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/artists_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"
+                android:scrollbars="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/item_card_actors" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_margin_small"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/studio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_weight="1"
+                android:textColor="@color/grey"
+                tools:text="@string/movie_details_studio"
+                tools:textColor="@color/grey" />
+          <TextView
+              android:id="@+id/studio_value"
+              tools:text="Legendary Pictures"
+              android:layout_weight="11"
+              android:textColor="@color/grey"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/material_margin_small"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/genre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_weight="1"
+                android:text="@string/movie_details_genre"
+                android:textColor="@color/grey"
+                tools:textColor="@color/grey" />
+            <TextView
+                android:id="@+id/genre_value"
+                tools:text="боевик, фантастика, приключения"
+                android:layout_weight="7"
+                android:textColor="@color/grey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/material_margin_small"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_weight="1"
+                android:text="@string/movie_details_year"
+                android:textColor="@color/grey"
+                tools:textColor="@color/grey" />
+            <TextView
+                android:id="@+id/year_value"
+                tools:text="2010"
+                android:layout_weight="10"
+                android:textColor="@color/grey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
