@@ -30,5 +30,6 @@
     <dimen name="margin_year_movie_details">40dp</dimen>
     <dimen name="genre_value_movie_details">50dp</dimen>
     <dimen name="studio_value_margin_movie_details">60dp</dimen>
+    <dimen name="artist_height_movie_details">100dp</dimen>
 
 </resources>
