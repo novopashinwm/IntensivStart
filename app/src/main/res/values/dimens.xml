@@ -8,7 +8,6 @@
     <dimen name="image_preview_width">75dp</dimen>
     <dimen name="image_preview_side">48dp</dimen>
 
-
     <!-- Avatar -->
     <dimen name="avatar_size">120dp</dimen>
 
@@ -27,5 +26,9 @@
     <dimen name="details_header_image">220dp</dimen>
     <dimen name="icon_size">24dp</dimen>
     <dimen name="margin_start_rating_details">190dp</dimen>
+    <dimen name="artist_fullname_text_size">7sp</dimen>
+    <dimen name="margin_year_movie_details">40dp</dimen>
+    <dimen name="genre_value_movie_details">50dp</dimen>
+    <dimen name="studio_value_margin_movie_details">60dp</dimen>
 
 </resources>
