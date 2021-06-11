@@ -1,20 +1,22 @@
 package ru.androidschool.intensiv.ui.movie_details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
-import kotlinx.android.synthetic.main.item_with_text.*
 import kotlinx.android.synthetic.main.movie_details_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.MockDetailsRepository
-import ru.androidschool.intensiv.data.MockRepository
+import ru.androidschool.intensiv.data.ArtistData
+import ru.androidschool.intensiv.data.MovieDetails
 import ru.androidschool.intensiv.extensions.loadImage
-import ru.androidschool.intensiv.ui.feed.MainCardContainer
-import ru.androidschool.intensiv.ui.feed.MovieItem
-import java.util.Collections.addAll
+import ru.androidschool.intensiv.extensions.rating
+import ru.mikhailskiy.retrofitexample.network.MovieApiClient
+
 
 class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
 
@@ -24,16 +26,35 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val movie_id = arguments?.getInt("movie_id")
+        MovieApiClient.apiClient.getMovieDetails(movie_id!!).enqueue(object : Callback<MovieDetails> {
+            override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
+                val movie = response!!.body()!!
+                header_image_detail.loadImage(movie.backdropPath)
+                title.text = movie.title
+                movie_detail_rating.rating = movie.voteAverage.rating()
+                overview.text = movie.overview
+                studio_value.text = movie.productionCompanies.map { it.name }.joinToString(", ")
+                genre_value.text = movie.genres.map { it.name }.toList().joinToString(", ")
+                year_value.text = movie.releaseDate
+            }
 
-        val movie = MockDetailsRepository.getDetailMovie()
-        header_image_detail.loadImage(movie.poster.toString())
-        title.text = movie.title
-        movie_detail_rating.rating = movie.rating
-        overview.text = context?.getString(R.string.mock_overview)
-        studio_value.text = movie.studio
-        genre_value.text = movie.genre
-        year_value.text = movie.year
-        val newArtistList = movie.artists.map { ArtistItem(it) }.toList()
-        actor_items_container.adapter = adapter.apply { addAll(newArtistList) }
+            override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
+                Log.e("Error", t.toString())
+            }
+        })
+
+        MovieApiClient.apiClient.getArtists(movie_id!!).enqueue(object : Callback<ArtistData>
+            {
+                override fun onResponse(call: Call<ArtistData>, response: Response<ArtistData>) {
+                    val artists = response!!.body()!!
+                    val artistList = artists.cast.map { ArtistItem(it) }.toList()
+                    actor_items_container.adapter = adapter.apply { addAll(artistList) }
+                }
+
+                override fun onFailure(call: Call<ArtistData>, t: Throwable) {
+                    Log.e("Error", t.toString())
+                }
+            })
     }
 }
