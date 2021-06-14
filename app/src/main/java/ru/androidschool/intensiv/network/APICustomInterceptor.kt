@@ -10,6 +10,7 @@ class APICustomInterceptor : Interceptor {
         val originalRequest = chain.request()
         val originalURL = originalRequest.url
         val modifiedURL = originalURL.newBuilder()
+
             .addQueryParameter("api_key", THE_MOVIE_DATABASE_API)
             .addQueryParameter("language","ru")
             .build()

@@ -1,7 +1,6 @@
 package ru.androidschool.intensiv.ui.tvshows
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.TVsResponse
+import ru.androidschool.intensiv.data.Movie
+import ru.androidschool.intensiv.data.MoviesResponse
 import ru.mikhailskiy.retrofitexample.network.MovieApiClient
+import timber.log.Timber
 
 class TvShowsFragment : Fragment() {
 
@@ -33,15 +34,18 @@ class TvShowsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        MovieApiClient.apiClient.getTVPopular().enqueue(object : Callback<TVsResponse> {
-            override fun onResponse(call: Call<TVsResponse>, response: Response<TVsResponse>) {
-                val tvs = response.body()!!.results
+        MovieApiClient.apiClient.getTVPopular().enqueue(object : Callback<MoviesResponse> {
+            override fun onResponse(call: Call<MoviesResponse>, response: Response<MoviesResponse>) {
+                lateinit var tvs : List<Movie>
+                response.body()?.results?.let {
+                    tvs = it
+                }
                 val tvsList =  tvs.map {TVItem(it) { } }.toList()
                 tv_show_recycler_view.adapter = adapter.apply { addAll(tvsList) }
             }
 
-            override fun onFailure(call: Call<TVsResponse>, t: Throwable) {
-                Log.e("ERROR", t.toString())
+            override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                Timber.e(t.toString())
             }
         })
 

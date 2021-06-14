@@ -2,7 +2,6 @@ package ru.androidschool.intensiv.data
 
 import com.google.gson.annotations.SerializedName
 
-
 data class MovieDetails(
     val adult: Boolean,
     @SerializedName("backdrop_path")
@@ -41,30 +40,4 @@ data class MovieDetails(
     val voteAverage: Double,
     @SerializedName("vote_count")
     val voteCount: Int
-) {
-    data class Genre(
-        val id: Int,
-        val name: String
-    )
-
-    data class ProductionCompany(
-        val id: Int,
-        @SerializedName("logo_path")
-        val logoPath: String?,
-        val name: String,
-        @SerializedName("origin_country")
-        val originCountry: String
-    )
-
-    data class ProductionCountry(
-        @SerializedName("iso_3166_1")
-        val iso31661: String,
-        val name: String
-    )
-
-    data class SpokenLanguage(
-        @SerializedName("iso_639_1")
-        val iso6391: String,
-        val name: String
-    )
-}
+)

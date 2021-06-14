@@ -1,7 +1,6 @@
 package ru.androidschool.intensiv.ui.movie_details
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
@@ -16,6 +15,7 @@ import ru.androidschool.intensiv.data.MovieDetails
 import ru.androidschool.intensiv.extensions.loadImage
 import ru.androidschool.intensiv.extensions.rating
 import ru.mikhailskiy.retrofitexample.network.MovieApiClient
+import timber.log.Timber
 
 
 class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
@@ -29,7 +29,12 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
         val movie_id = arguments?.getInt("movie_id")
         MovieApiClient.apiClient.getMovieDetails(movie_id!!).enqueue(object : Callback<MovieDetails> {
             override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
-                val movie = response!!.body()!!
+                lateinit var movie: MovieDetails
+                response?.let {
+                    it?.body()?.let {
+                        movie = it
+                    }
+                }
                 header_image_detail.loadImage(movie.backdropPath)
                 title.text = movie.title
                 movie_detail_rating.rating = movie.voteAverage.rating()
@@ -40,20 +45,25 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
             }
 
             override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
-                Log.e("Error", t.toString())
+                Timber.e(t.toString())
             }
         })
 
-        MovieApiClient.apiClient.getArtists(movie_id!!).enqueue(object : Callback<ArtistData>
+        MovieApiClient.apiClient.getArtists(movie_id).enqueue(object : Callback<ArtistData>
             {
                 override fun onResponse(call: Call<ArtistData>, response: Response<ArtistData>) {
-                    val artists = response!!.body()!!
+                    lateinit var artists: ArtistData
+                    response?.let {
+                        it?.body()?.let {
+                            artists = it
+                        }
+                    }
                     val artistList = artists.cast.map { ArtistItem(it) }.toList()
                     actor_items_container.adapter = adapter.apply { addAll(artistList) }
                 }
 
                 override fun onFailure(call: Call<ArtistData>, t: Throwable) {
-                    Log.e("Error", t.toString())
+                    Timber.e(t.toString())
                 }
             })
     }

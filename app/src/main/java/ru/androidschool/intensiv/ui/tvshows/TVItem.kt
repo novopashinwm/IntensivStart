@@ -4,13 +4,13 @@ import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import com.xwray.groupie.kotlinandroidextensions.Item
 import kotlinx.android.synthetic.main.item_with_text.*
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.TV
+import ru.androidschool.intensiv.data.Movie
 import ru.androidschool.intensiv.extensions.loadImage
 import ru.androidschool.intensiv.extensions.rating
 
 class TVItem(
-    private val content: TV,
-    private val onClick: (movie: TV) -> Unit
+    private val content: Movie,
+    private val onClick: (movie: Movie) -> Unit
 ) : Item() {
 
     override fun getLayout() = R.layout.item_tv_show

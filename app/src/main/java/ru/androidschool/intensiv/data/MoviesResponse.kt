@@ -10,11 +10,4 @@ data class MoviesResponse(
     val totalPages: Int,
     @SerializedName("total_results")
     val totalResults: Int
-) {
-    data class Dates(
-        val maximum: String,
-        val minimum: String
-    )
-
-
-}
+)

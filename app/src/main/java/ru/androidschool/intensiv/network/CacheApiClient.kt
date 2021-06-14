@@ -1,11 +1,11 @@
 package ru.mikhailskiy.retrofitexample.network
 
-import android.util.Log
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.androidschool.intensiv.RetroApp
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -50,7 +50,7 @@ object CacheApiClient {
         return object : Interceptor {
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): Response {
-                Log.d("Cache", "offline interceptor: called.")
+                Timber.d( "offline interceptor: called.")
                 var request: Request = chain.request()
 
                 // prevent caching when network is on. For that we use the "networkInterceptor"
@@ -74,7 +74,7 @@ object CacheApiClient {
         return object : Interceptor {
             @Throws(IOException::class)
             override fun intercept(chain: Interceptor.Chain): Response {
-                Log.d("Cache", "network interceptor: called.")
+                Timber.d("network interceptor: called.")
 
                 val response: Response = chain.proceed(chain.request())
 

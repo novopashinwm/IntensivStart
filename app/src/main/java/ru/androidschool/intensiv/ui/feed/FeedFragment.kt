@@ -1,8 +1,9 @@
 package ru.androidschool.intensiv.ui.feed
 
 import android.os.Bundle
-import android.util.Log
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -103,7 +104,7 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
                 }
 
                 override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                    Log.e("ERROR", t.toString())
+                    Timber.e(t.toString())
                 }
             }
         )

@@ -1,15 +1,11 @@
 package ru.mikhailskiy.retrofitexample.network
 
-
-
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
-import retrofit2.http.Query
 import ru.androidschool.intensiv.data.ArtistData
 import ru.androidschool.intensiv.data.MovieDetails
 import ru.androidschool.intensiv.data.MoviesResponse
-import ru.androidschool.intensiv.data.TVsResponse
 
 interface MovieApiInterface {
 
@@ -26,7 +22,7 @@ interface MovieApiInterface {
     fun getPopular(): Call<MoviesResponse>
 
     @GET("tv/popular")
-    fun getTVPopular(): Call<TVsResponse>
+    fun getTVPopular(): Call<MoviesResponse>
 
     @GET("movie/{movie_id}")
     fun getMovieDetails(@Path("movie_id") movie_id:Int) : Call<MovieDetails>

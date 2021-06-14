@@ -27,7 +27,6 @@ object AdvancedApiClient : BaseApi() {
                 .client(client)
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-
                 .build()
         }
 }
