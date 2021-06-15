@@ -26,4 +26,12 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="placeholder">Пёс Киноман</string>
+    <string name="watch_movie_text_button">Смотреть</string>
+    <string name="mock_overview">Дом Кобб — талантливый вор, лучший из лучших в опасном искусстве извлечения: он крадёт ценные секреты из глубин подсознания во время сна, когда человеческий разум наиболее уязвим.</string>
+    <string name="mock_details_description">Начало</string>
+    <string name="my_res">Дом Кобб — талантливый вор, лучший из лучших в опасном искусстве извлечения: он крадёт ценные секреты из глубин подсознания во время сна, когда человеческий разум наиболее уязвим. Редкие способности Кобба сделали его ценным игроком в привычном к предательству мире промышленного шпионажа, но они же превратили его в извечного беглеца и лишили всего, что он когда-либо любил.</string>
+    <string name="movie_details_studio">Студия:</string>
+    <string name="movie_details_genre">Жанр:</string>
+    <string name="movie_details_year">Год:</string>
+    <string name="movie_details_like">Like</string>
 </resources>

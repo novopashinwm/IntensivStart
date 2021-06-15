@@ -1,7 +1,10 @@
 package ru.androidschool.intensiv.ui.feed
 
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.View
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -10,10 +13,14 @@ import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
 import kotlinx.android.synthetic.main.feed_fragment.*
 import kotlinx.android.synthetic.main.feed_header.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import ru.androidschool.intensiv.R
-import ru.androidschool.intensiv.data.MockRepository
 import ru.androidschool.intensiv.data.Movie
+import ru.androidschool.intensiv.data.MoviesResponse
 import ru.androidschool.intensiv.ui.afterTextChanged
+import ru.mikhailskiy.retrofitexample.network.MovieApiClient
 import timber.log.Timber
 
 class FeedFragment : Fragment(R.layout.feed_fragment) {
@@ -41,41 +48,17 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
             }
         }
 
-        // Используя Мок-репозиторий получаем фэйковый список фильмов
-        val moviesList = listOf(
-            MainCardContainer(
-                R.string.recommended,
-                MockRepository.getMovies().map {
-                    MovieItem(it) { movie ->
-                        openMovieDetails(
-                            movie
-                        )
-                    }
-                }.toList()
-            )
-        )
+        with(MovieApiClient.apiClient) {
+            addMoviesToMainCardContainer(getMovieNowPlaying(), R.string.recommended, true)
+            addMoviesToMainCardContainer(getUpComing(), R.string.upcoming)
+            addMoviesToMainCardContainer(getPopular(), R.string.popular)
+        }
 
-        movies_recycler_view.adapter = adapter.apply { addAll(moviesList) }
-
-        // Используя Мок-репозиторий получаем фэйковый список фильмов
-        // Чтобы отобразить второй ряд фильмов
-        val newMoviesList = listOf(
-            MainCardContainer(
-                R.string.upcoming,
-                MockRepository.getMovies().map {
-                    MovieItem(it) { movie ->
-                        openMovieDetails(movie)
-                    }
-                }.toList()
-            )
-        )
-
-        adapter.apply { addAll(newMoviesList) }
     }
 
     private fun openMovieDetails(movie: Movie) {
         val bundle = Bundle()
-        bundle.putString(KEY_TITLE, movie.title)
+        bundle.putInt(KEY_TITLE, movie.id)
         findNavController().navigate(R.id.movie_details_fragment, bundle, options)
     }
 
@@ -88,15 +71,48 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
     override fun onStop() {
         super.onStop()
         search_toolbar.clear()
+        adapter.clear()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
     }
 
+    fun addMoviesToMainCardContainer(callMovie: Call<MoviesResponse>
+                                     , @StringRes sectionName: Int
+                                     , firstList : Boolean = false) {
+
+        callMovie.enqueue(object : Callback<MoviesResponse> {
+                override fun onResponse(
+                    call: Call<MoviesResponse>,
+                    response: Response<MoviesResponse>
+                ) {
+                    val movies = response.body()!!.results
+                    val moviesList = listOf(
+                        MainCardContainer(
+                            sectionName,
+                            movies.map {
+                                MovieItem(it) { movie -> openMovieDetails(movie) }
+                            }.toList()
+                        )
+                    )
+                    if (firstList) {
+                        movies_recycler_view.adapter = adapter.apply { addAll(moviesList) }
+                    } else {
+                        adapter.apply { addAll(moviesList) }
+                    }
+                }
+
+                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
+                    Timber.e(t.toString())
+                }
+            }
+        )
+    }
+
     companion object {
         const val MIN_LENGTH = 3
-        const val KEY_TITLE = "title"
+        const val KEY_TITLE = "movie_id"
         const val KEY_SEARCH = "search"
     }
 }
