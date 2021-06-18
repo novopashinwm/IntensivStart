@@ -84,4 +84,8 @@ dependencies {
     debugImplementation "com.readystatesoftware.chuck:library:$rootProject.chuckLibrary"
     releaseImplementation "com.readystatesoftware.chuck:library-no-op:$rootProject.chuckLibrary"
 
+    //RX
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.rxadapter"
 }

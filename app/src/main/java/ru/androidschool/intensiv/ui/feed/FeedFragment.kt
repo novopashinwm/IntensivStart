@@ -6,10 +6,13 @@ import android.view.MenuInflater
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.feed_fragment.*
 import kotlinx.android.synthetic.main.feed_header.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
@@ -18,10 +21,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.Movie
-import ru.androidschool.intensiv.data.MoviesResponse
+import ru.androidschool.intensiv.extensions.init
 import ru.androidschool.intensiv.ui.afterTextChanged
 import ru.mikhailskiy.retrofitexample.network.MovieApiClient
 import timber.log.Timber
+import java.util.*
+import ru.androidschool.intensiv.data.MoviesResponse as MoviesResponse
 
 class FeedFragment : Fragment(R.layout.feed_fragment) {
 
@@ -49,11 +54,34 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         }
 
         with(MovieApiClient.apiClient) {
-            addMoviesToMainCardContainer(getMovieNowPlaying(), R.string.recommended, true)
-            addMoviesToMainCardContainer(getUpComing(), R.string.upcoming)
-            addMoviesToMainCardContainer(getPopular(), R.string.popular)
+            getMovieNowPlaying().init()
+                .subscribe { response -> setRXItemsData(response, R.string.recommended, true) }
+
+            getUpComing().init()
+                .subscribe { response -> setRXItemsData(response, R.string.upcoming) }
+            getPopular().init()
+                .subscribe { response -> setRXItemsData(response, R.string.popular) }
+
         }
 
+    }
+
+    private fun setRXItemsData(response: MoviesResponse, @StringRes sectionName: Int
+                               , firstList : Boolean = false) {
+        val movies = response.results
+        val moviesList = listOf(
+            MainCardContainer(
+                sectionName,
+                movies.map {
+                    MovieItem(it) { movie -> openMovieDetails(movie) }
+                }.toList()
+            )
+        )
+        if (firstList) {
+            movies_recycler_view.adapter = adapter.apply { addAll(moviesList) }
+        } else {
+            adapter.apply { addAll(moviesList) }
+        }
     }
 
     private fun openMovieDetails(movie: Movie) {
@@ -78,39 +106,8 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
         inflater.inflate(R.menu.main_menu, menu)
     }
 
-    fun addMoviesToMainCardContainer(callMovie: Call<MoviesResponse>
-                                     , @StringRes sectionName: Int
-                                     , firstList : Boolean = false) {
-
-        callMovie.enqueue(object : Callback<MoviesResponse> {
-                override fun onResponse(
-                    call: Call<MoviesResponse>,
-                    response: Response<MoviesResponse>
-                ) {
-                    val movies = response.body()!!.results
-                    val moviesList = listOf(
-                        MainCardContainer(
-                            sectionName,
-                            movies.map {
-                                MovieItem(it) { movie -> openMovieDetails(movie) }
-                            }.toList()
-                        )
-                    )
-                    if (firstList) {
-                        movies_recycler_view.adapter = adapter.apply { addAll(moviesList) }
-                    } else {
-                        adapter.apply { addAll(moviesList) }
-                    }
-                }
-
-                override fun onFailure(call: Call<MoviesResponse>, t: Throwable) {
-                    Timber.e(t.toString())
-                }
-            }
-        )
-    }
-
     companion object {
+
         const val MIN_LENGTH = 3
         const val KEY_TITLE = "movie_id"
         const val KEY_SEARCH = "search"
