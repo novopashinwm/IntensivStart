@@ -30,9 +30,12 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val movie_id = arguments?.getInt("movie_id")
+        var movie_id : Int = 0
+        arguments?.getInt("movie_id")?.let {
+            movie_id = it
+        }
 
-        MovieApiClient.apiClient.getMovieDetails(movie_id!!)
+        MovieApiClient.apiClient.getMovieDetails(movie_id)
             .init()
             .subscribe { movie ->
                 header_image_detail.loadImage(movie.backdropPath)

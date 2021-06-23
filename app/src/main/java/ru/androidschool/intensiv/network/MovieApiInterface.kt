@@ -13,19 +13,19 @@ import ru.androidschool.intensiv.data.MoviesResponse
 interface MovieApiInterface {
 
     @GET("movie/top_rated")
-    fun getTopRatedMovies(): Observable<MoviesResponse>
+    fun getTopRatedMovies(): Single<MoviesResponse>
 
     @GET("movie/now_playing")
-    fun getMovieNowPlaying() : Observable<MoviesResponse>
+    fun getMovieNowPlaying() : Single<MoviesResponse>
 
     @GET("movie/upcoming")
-    fun getUpComing(): Observable<MoviesResponse>
+    fun getUpComing(): Single<MoviesResponse>
 
     @GET("movie/popular")
-    fun getPopular(): Observable<MoviesResponse>
+    fun getPopular(): Single<MoviesResponse>
 
     @GET("tv/popular")
-    fun getTVPopular(): Observable<MoviesResponse>
+    fun getTVPopular(): Single<MoviesResponse>
 
     @GET("movie/{movie_id}")
     fun getMovieDetails(@Path("movie_id") movie_id:Int) : Single<MovieDetails>
@@ -34,5 +34,5 @@ interface MovieApiInterface {
     fun getArtists(@Path("movie_id") movie_id: Int) : Single<ArtistData>
 
     @GET("search/movie")
-    fun searchMovie(@Query("query") query: String) : Observable<MoviesResponse>
+    fun searchMovie(@Query("query") query: String) : Single<MoviesResponse>
 }
