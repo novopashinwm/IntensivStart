@@ -20,17 +20,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         GroupAdapter<GroupieViewHolder>()
     }
 
-    val onTextChangedObservable by lazy {
-        Observable
-            .create(ObservableOnSubscribe<String> { subscriber ->
-                editText.doAfterTextChanged { text ->
-                subscriber.onNext(
-                    text.toString()
-                )
-            }
-        })
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var searchTerm : String = ""
@@ -38,16 +27,17 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             searchTerm = it
         }
         search_toolbar.setText(searchTerm)
-        Observable.interval(500, TimeUnit.MILLISECONDS)
-            .subscribe { onTextChangedObservable  }
-
-
-        MovieApiClient.apiClient.searchMovie(searchTerm)
-            .init()
-            .subscribe { response ->
-                val movies = response.results
-                val movieList = movies.map { movie -> MovieItem(movie) {} }.toList()
-                movies_recycler_view.adapter = adapter.apply { addAll(movieList) }
+        search_toolbar.onTextChangedObservable
+            .filter { it.length >= 3 }
+            .debounce (500, TimeUnit.MILLISECONDS)
+            .subscribe{
+                MovieApiClient.apiClient.searchMovie(it)
+                    .init()
+                    .subscribe { response ->
+                        val movies = response.results
+                        val movieList = movies.map { movie -> MovieItem(movie) {} }.toList()
+                        movies_recycler_view.adapter = adapter.apply { addAll(movieList) }
+                    }
             }
     }
 }
