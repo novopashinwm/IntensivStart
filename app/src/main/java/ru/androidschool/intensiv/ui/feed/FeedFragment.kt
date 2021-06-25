@@ -19,6 +19,7 @@ import ru.androidschool.intensiv.extensions.init
 import ru.androidschool.intensiv.ui.afterTextChanged
 import ru.mikhailskiy.retrofitexample.network.MovieApiClient
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import ru.androidschool.intensiv.data.MoviesResponse as MoviesResponse
 
 class FeedFragment : Fragment(R.layout.feed_fragment) {
@@ -39,12 +40,18 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        search_toolbar.search_edit_text.afterTextChanged {
+        search_toolbar.onTextChangedObservable
+            .filter { it.toString().length > MIN_LENGTH }
+            .subscribe {
+                Timber.d(it.toString())
+                openSearch(it.toString())
+            }
+        /*search_toolbar.search_edit_text.afterTextChanged {
             Timber.d(it.toString())
             if (it.toString().length > MIN_LENGTH) {
                 openSearch(it.toString())
             }
-        }
+        }*/
 
         with(MovieApiClient.apiClient) {
             getMovieNowPlaying().init()
