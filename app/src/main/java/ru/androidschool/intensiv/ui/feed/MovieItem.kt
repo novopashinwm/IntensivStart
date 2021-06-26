@@ -21,6 +21,8 @@ class MovieItem(
         viewHolder.content.setOnClickListener {
             onClick.invoke(content)
         }
-        viewHolder.image_preview.loadImage(content.posterPath)
+        content.posterPath?.let {
+            viewHolder.image_preview.loadImage(it)
+        }
     }
 }
