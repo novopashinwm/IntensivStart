@@ -5,6 +5,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.movie_details_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +14,7 @@ import retrofit2.Response
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.data.ArtistData
 import ru.androidschool.intensiv.data.MovieDetails
+import ru.androidschool.intensiv.extensions.init
 import ru.androidschool.intensiv.extensions.loadImage
 import ru.androidschool.intensiv.extensions.rating
 import ru.mikhailskiy.retrofitexample.network.MovieApiClient
@@ -26,15 +29,15 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val movie_id = arguments?.getInt("movie_id")
-        MovieApiClient.apiClient.getMovieDetails(movie_id!!).enqueue(object : Callback<MovieDetails> {
-            override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
-                lateinit var movie: MovieDetails
-                response?.let {
-                    it?.body()?.let {
-                        movie = it
-                    }
-                }
+
+        var movie_id : Int = 0
+        arguments?.getInt("movie_id")?.let {
+            movie_id = it
+        }
+
+        MovieApiClient.apiClient.getMovieDetails(movie_id)
+            .init()
+            .subscribe { movie ->
                 header_image_detail.loadImage(movie.backdropPath)
                 title.text = movie.title
                 movie_detail_rating.rating = movie.voteAverage.rating()
@@ -42,29 +45,19 @@ class MovieDetailsFragment : Fragment(R.layout.movie_details_fragment) {
                 studio_value.text = movie.productionCompanies.map { it.name }.joinToString(", ")
                 genre_value.text = movie.genres.map { it.name }.toList().joinToString(", ")
                 year_value.text = movie.releaseDate
+
             }
 
-            override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
-                Timber.e(t.toString())
+        MovieApiClient.apiClient.getArtists(movie_id)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError {
+                    t -> Timber.e(t.toString())
             }
-        })
+            .subscribe { artists ->
+                val artistList = artists.cast.map { ArtistItem(it) }.toList()
+                actor_items_container.adapter = adapter.apply { addAll(artistList) }
+            }
 
-        MovieApiClient.apiClient.getArtists(movie_id).enqueue(object : Callback<ArtistData>
-            {
-                override fun onResponse(call: Call<ArtistData>, response: Response<ArtistData>) {
-                    lateinit var artists: ArtistData
-                    response?.let {
-                        it?.body()?.let {
-                            artists = it
-                        }
-                    }
-                    val artistList = artists.cast.map { ArtistItem(it) }.toList()
-                    actor_items_container.adapter = adapter.apply { addAll(artistList) }
-                }
-
-                override fun onFailure(call: Call<ArtistData>, t: Throwable) {
-                    Timber.e(t.toString())
-                }
-            })
     }
 }
