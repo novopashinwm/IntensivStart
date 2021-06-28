@@ -11,6 +11,8 @@ import io.reactivex.ObservableOnSubscribe
 import kotlinx.android.synthetic.main.feed_header.*
 import kotlinx.android.synthetic.main.feed_header.view.*
 import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.fragment_search.progress_bar
+import kotlinx.android.synthetic.main.tv_shows_fragment.*
 import ru.androidschool.intensiv.R
 import ru.androidschool.intensiv.extensions.init
 import ru.androidschool.intensiv.ui.feed.FeedFragment.Companion.KEY_SEARCH
@@ -44,7 +46,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun showMovies(it: String) {
         MovieApiClient.apiClient.searchMovie(it)
             .init()
-            .subscribe { response ->
+            .doOnSubscribe { progress_bar.visibility = View.VISIBLE }
+            .doFinally { progress_bar.visibility = View.GONE }
+            .subscribe {  response ->
                 val movies = response.results
                 val movieList = movies.map { movie -> MovieItem(movie) {} }.toList()
                 adapter.clear()

@@ -10,6 +10,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.Function3
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.feed_fragment.*
 import kotlinx.android.synthetic.main.feed_header.*
 import kotlinx.android.synthetic.main.search_toolbar.view.*
@@ -46,21 +52,21 @@ class FeedFragment : Fragment(R.layout.feed_fragment) {
                 Timber.d(it.toString())
                 openSearch(it.toString())
             }
-        /*search_toolbar.search_edit_text.afterTextChanged {
-            Timber.d(it.toString())
-            if (it.toString().length > MIN_LENGTH) {
-                openSearch(it.toString())
-            }
-        }*/
 
         with(MovieApiClient.apiClient) {
-            getMovieNowPlaying().init()
-                .subscribe { response -> setMovies(response, R.string.recommended, true) }
-
-            getUpComing().init()
-                .subscribe { response -> setMovies(response, R.string.upcoming) }
-            getPopular().init()
-                .subscribe { response -> setMovies(response, R.string.popular) }
+            Single.zip (getMovieNowPlaying(), getUpComing(), getPopular(),
+                Function3<MoviesResponse, MoviesResponse, MoviesResponse, List<FeedItem>>
+                {now, upcomming, popular ->
+                    listOf(FeedItem(R.string.recommended, now, true)
+                        , FeedItem(R.string.upcoming, upcomming)
+                        , FeedItem(R.string.popular, popular)) })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { progress_bar.visibility = View.VISIBLE }
+                .doFinally { progress_bar.visibility = View.GONE }
+                .subscribe({
+                    it.map { feed -> setMovies(feed.items,feed.title, feed.first) }
+                }, { throwable -> Timber.e(throwable) })
         }
     }
 

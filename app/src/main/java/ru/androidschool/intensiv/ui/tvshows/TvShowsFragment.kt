@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.kotlinandroidextensions.GroupieViewHolder
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.tv_shows_fragment.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,7 +50,10 @@ class TvShowsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         MovieApiClient.apiClient.getTVPopular()
             .init()
+            .doOnSubscribe { progress_bar.visibility = View.VISIBLE }
+            .doFinally { progress_bar.visibility = View.GONE }
             .subscribe { response ->
+                progress_bar.visibility = View.GONE
                 lateinit var tvs : List<Movie>
                 response.results?.let { tvs = it }
                 val tvsList =  tvs.map {TVItem(it) { } }.toList()
